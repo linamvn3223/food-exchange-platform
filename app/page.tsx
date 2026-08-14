@@ -1,47 +1,40 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import { ArrowRight, Bell, Bookmark, CalendarDays, Check, ChevronRight, Clock3, Heart, Leaf, MapPin, Menu, Plus, Search, ShieldCheck, Sparkles, Star, Trophy, Truck, Users, X } from 'lucide-react'
+
+const categories = ['All items', 'Cooked meals', 'Bakery', 'Fruits & vegetables', 'Packaged']
+const posts = [
+  { id: 1, title: 'Rice & chicken meals', category: 'Cooked meals', provider: 'Green Table Kitchen', location: 'Downtown', quantity: '20 meals', expiry: 'Today, 7:30 PM', urgency: 'Pickup soon', price: 'Free', tone: 'sage', icon: '🍛' },
+  { id: 2, title: 'Fresh sourdough loaves', category: 'Bakery', provider: 'Mina’s Bakery', location: 'Riverside', quantity: '12 loaves', expiry: 'Tomorrow, 9:00 AM', urgency: 'Fresh today', price: '$2 each', tone: 'peach', icon: '🥖' },
+  { id: 3, title: 'Market produce boxes', category: 'Fruits & vegetables', provider: 'Harvest Co-op', location: 'East Village', quantity: '8 boxes', expiry: 'Today, 6:00 PM', urgency: 'Pickup soon', price: 'Free', tone: 'blue', icon: '🥬' },
+  { id: 4, title: 'Pantry staples bundle', category: 'Packaged', provider: 'Good Neighbor Org', location: 'Northside', quantity: '15 bundles', expiry: 'Sep 12, 2026', urgency: 'Long shelf life', price: 'Free', tone: 'lavender', icon: '📦' },
+  { id: 5, title: 'Vegetable curry', category: 'Cooked meals', provider: 'Saffron House', location: 'Old Town', quantity: '10 portions', expiry: 'Today, 8:00 PM', urgency: 'Pickup soon', price: 'Free', tone: 'yellow', icon: '🍲' },
+]
+
+function Logo() { return <a href="#top" className="logo"><span className="logo-mark"><Leaf size={22} strokeWidth={2.5} /></span><span>share<span>table</span></span></a> }
+
+function Nav({ onPost }: { onPost: () => void }) {
+  return <header className="site-header"><div className="header-inner"><Logo /><nav className="desktop-nav"><a href="#browse">Browse food</a><a href="#how">How it works</a><a href="#community">Community</a></nav><div className="header-actions"><button className="icon-button notification" aria-label="Notifications"><Bell size={19} /><i /></button><a className="sign-in" href="#sign-in">Sign in</a><button className="button button-dark small" onClick={onPost}><Plus size={16} /> Post food</button><button className="mobile-menu" aria-label="Open menu"><Menu size={22} /></button></div></div></header>
+}
+
+function FoodCard({ post, onClaim }: { post: typeof posts[number], onClaim: (title: string) => void }) {
+  return <article className="food-card"><div className={`food-image ${post.tone}`}><span>{post.icon}</span><button className="save-button" aria-label={`Save ${post.title}`}><Bookmark size={17} /></button><span className="price-pill">{post.price}</span></div><div className="food-content"><div className="eyebrow"><span>{post.category}</span><span className="urgency"><Clock3 size={12} /> {post.urgency}</span></div><h3>{post.title}</h3><div className="provider"><span className="avatar">{post.provider[0]}</span><span><strong>{post.provider}</strong><small><MapPin size={12} /> {post.location}</small></span><ShieldCheck className="verified" size={16} /></div><div className="card-footer"><span><Users size={14} /> {post.quantity}</span><span className="expiry"><CalendarDays size={14} /> {post.expiry}</span></div><button className="claim-button" onClick={() => onClaim(post.title)}>Claim food <ArrowRight size={15} /></button></div></article>
+}
+
 export default function Page() {
-  return (
-    <main
-      style={{
-        colorScheme: 'light dark',
-        position: 'relative',
-        display: 'flex',
-        minHeight: '100vh',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'light-dark(#fff, #000)',
-        color: 'light-dark(#000, #fff)',
-      }}
-    >
-      <svg
-        aria-hidden="true"
-        style={{ width: 80, height: 80 }}
-        width={80}
-        height={80}
-        fill="none"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path
-          d="M14.2 14.2H17V6.9375C17 4.76288 15.2371 3 13.0625 3H5.8V5.8M14.2 14.2V7.79063L7.79062 14.2H14.2ZM14.2 14.2V17H6.9375C4.76288 17 3 15.2371 3 13.0625V5.8H5.8M5.8 5.8V12.2313L12.2313 5.8H5.8Z"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <p
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 'calc(50% + 56px)',
-          transform: 'translateX(-50%)',
-          whiteSpace: 'nowrap',
-          fontSize: '14px',
-          fontWeight: 500,
-          color: 'light-dark(#71717a, #a1a1aa)',
-        }}
-      >
-        Your v0 generation will show here.
-      </p>
-    </main>
-  )
+  const [activeCategory, setActiveCategory] = useState('All items')
+  const [query, setQuery] = useState('')
+  const [claimed, setClaimed] = useState<string | null>(null)
+  const filtered = useMemo(() => posts.filter(p => (activeCategory === 'All items' || p.category === activeCategory) && `${p.title} ${p.provider}`.toLowerCase().includes(query.toLowerCase())), [activeCategory, query])
+  return <main id="top"><Nav onPost={() => document.getElementById('post')?.scrollIntoView({ behavior: 'smooth' })} />
+    <section className="hero"><div className="hero-copy"><div className="live-chip"><span className="live-dot" /> 1,248 meals shared this month</div><h1>Good food<br /><em>deserves</em> a table.</h1><p>Share surplus food with your neighbors, reduce waste, and make every meal count.</p><div className="hero-actions"><a href="#browse" className="button button-dark">Find food <ArrowRight size={17} /></a><button className="button button-light" onClick={() => document.getElementById('post')?.scrollIntoView({ behavior: 'smooth' })}>Share surplus <Plus size={17} /></button></div><div className="social-proof"><div className="avatar-stack"><span>J</span><span>M</span><span>A</span><span>+</span></div><span><strong>Join 2,400+ neighbors</strong><small>making a difference together</small></span></div></div><div className="hero-art" aria-label="Illustration of a shared meal"><div className="art-note note-one"><Heart size={15} fill="currentColor" /> good for you</div><div className="art-note note-two"><Leaf size={15} fill="currentColor" /> good for earth</div><div className="table-circle"><div className="plate plate-one">🍲</div><div className="plate plate-two">🥗</div><div className="plate plate-three">🥖</div><div className="plate plate-four">🍊</div><div className="table-flower">✦</div></div><span className="art-caption">everyone brings something</span></div></section>
+    <section className="campaign"><div className="campaign-icon"><Sparkles size={20} /></div><div className="campaign-copy"><span className="section-kicker">This month’s community challenge</span><strong>Zero Waste August</strong><span>Share 2,000 meals together</span></div><div className="progress-wrap"><div className="progress-label"><span>1,248 shared</span><span>62%</span></div><div className="progress"><span style={{ width: '62%' }} /></div></div><a href="#community" className="campaign-link">View challenge <ChevronRight size={17} /></a></section>
+    <section className="section browse" id="browse"><div className="section-heading"><div><span className="section-kicker">Fresh from the community</span><h2>Find something good.</h2></div><a href="#browse-all" className="text-link">Browse all food <ArrowRight size={16} /></a></div><div className="browse-tools"><div className="search-box"><Search size={18} /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search meals, bakeries, neighbors..." aria-label="Search food" />{query && <button onClick={() => setQuery('')} aria-label="Clear search"><X size={16} /></button>}</div><div className="category-tabs">{categories.map(c => <button key={c} className={activeCategory === c ? 'active' : ''} onClick={() => setActiveCategory(c)}>{c}</button>)}</div></div><div className="food-grid">{filtered.map(post => <FoodCard key={post.id} post={post} onClaim={setClaimed} />)}</div>{filtered.length === 0 && <div className="empty-results">No food matched that search. Try another neighborhood or category.</div>}</section>
+    <section className="how-section" id="how"><div className="section-heading centered"><div><span className="section-kicker">Simple by design</span><h2>Small actions. Big impact.</h2><p>Sharing food is easier when the whole neighborhood is in it together.</p></div></div><div className="steps"><div className="step"><span>01</span><div className="step-icon"><Search size={22} /></div><h3>Find food nearby</h3><p>Browse fresh listings from neighbors, local kitchens, and community organizations.</p></div><div className="step"><span>02</span><div className="step-icon"><Heart size={22} /></div><h3>Claim what you need</h3><p>Reserve a meal in a few taps and coordinate a convenient pickup or delivery.</p></div><div className="step"><span>03</span><div className="step-icon"><Leaf size={22} /></div><h3>Keep it moving</h3><p>Share your surplus, earn points, and help good food find a better destination.</p></div></div></section>
+    <section className="community-section" id="community"><div className="community-card"><div><span className="section-kicker">The sharetable community</span><h2>Every shared meal<br />is a <em>shared win.</em></h2><p>Track your impact, celebrate your neighbors, and turn everyday generosity into a habit.</p><a className="button button-dark" href="#leaderboard">See the leaderboard <Trophy size={16} /></a></div><div className="impact-card"><div className="impact-top"><span>Community impact</span><span className="sparkle">✦</span></div><strong>1,248</strong><span>meals kept in the community</span><div className="impact-row"><span><Leaf size={15} /> 384 kg food saved</span><span><Users size={15} /> 2,401 neighbors</span></div><div className="leader-row"><div className="avatar-stack"><span>R</span><span>S</span><span>L</span></div><span><strong>Top sharers this week</strong><small>Rania · Sam · Lina</small></span><Trophy size={22} /></div></div></div></section>
+    <section className="post-section" id="post"><div className="post-inner"><div><span className="section-kicker">Have extra to share?</span><h2>Put it on the table.</h2><p>One post can make someone&apos;s day — and keep perfectly good food out of the bin.</p></div><button className="button button-dark" onClick={() => setClaimed('Your food post')}>Post surplus food <Plus size={17} /></button></div></section>
+    <footer><Logo /><span>Good food deserves a table.</span><div><a href="#about">About</a><a href="#feedback">Feedback</a><a href="#sign-in">Sign in</a></div></footer>
+    {claimed && <div className="toast"><div className="toast-check"><Check size={17} /></div><span><strong>{claimed} {claimed === 'Your food post' ? 'is ready to share.' : 'is reserved.'}</strong><small>{claimed === 'Your food post' ? 'Sign in to create your listing.' : 'We’ll show you the pickup details next.'}</small></span><button onClick={() => setClaimed(null)} aria-label="Close notification"><X size={16} /></button></div>}
+  </main>
 }
