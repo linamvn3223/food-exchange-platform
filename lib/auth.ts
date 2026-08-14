@@ -8,6 +8,8 @@ const origins = [
   process.env.V0_DEV_APP_URL,
   process.env.V0_RUNTIME_URL,
   process.env.NEXT_PUBLIC_APP_URL,
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
 ].filter(Boolean) as string[]
 
 const baseURL = process.env.BETTER_AUTH_URL
@@ -15,12 +17,13 @@ const baseURL = process.env.BETTER_AUTH_URL
   || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined)
   || process.env.V0_DEV_APP_URL
   || process.env.V0_RUNTIME_URL
+  || (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : undefined)
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   database: new Pool({ connectionString: process.env.DATABASE_URL }),
   baseURL,
-  trustedOrigins: origins,
+  trustedOrigins: [...origins, 'https://*.vercel.run', 'https://*.vercel.app'],
   emailAndPassword: { enabled: true },
   advanced: process.env.NODE_ENV === 'development' ? { defaultCookieAttributes: { sameSite: 'none', secure: true } } : undefined,
 })

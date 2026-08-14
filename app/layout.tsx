@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { DM_Sans, Fraunces } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { LocaleProvider } from '@/components/locale-provider'
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' })
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-display' })
@@ -45,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${fraunces.variable}`}>
       <body className="antialiased">
-        {children}
+        <LocaleProvider>{children}</LocaleProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
