@@ -21,21 +21,21 @@ Deployment: Automatic with every merge to main.
 
 ⚙️ Getting Started
 Run the development server:
-
+___________________________________________________________________________________________________________________________
 bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
+___________________________________________________________________________________________________________________________
+
 Open http://localhost:3000 in your browser to view the app.
 Edit app/page.tsx to start customizing — changes update automatically.
 
 📖 Learn More
 Next.js Documentation – Features and API reference.
-
 Learn Next.js – Interactive tutorial.
-
 v0 Documentation – Guide to building with v0.
 
 🌍 Deployment
